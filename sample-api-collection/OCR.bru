@@ -1,0 +1,15 @@
+meta {
+  name: OCR
+  type: http
+  seq: 2
+}
+
+post {
+  url: https://wrdgdi5x68.execute-api.eu-central-1.amazonaws.com/Dev/ocr
+  body: multipartForm
+  auth: none
+}
+
+body:multipart-form {
+  image: @file(/Users/mubashirhanif/Desktop/Screenshot 2024-12-02 at 16.04.45.png)
+}

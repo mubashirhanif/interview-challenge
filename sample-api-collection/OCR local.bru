@@ -1,0 +1,15 @@
+meta {
+  name: OCR local
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://127.0.0.1:4010/Dev/ocr
+  body: multipartForm
+  auth: none
+}
+
+body:multipart-form {
+  image: @file(/Users/mubashirhanif/Desktop/Screenshot 2024-12-02 at 16.04.45.png)
+}

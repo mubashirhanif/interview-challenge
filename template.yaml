@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  peter-part-interview-challenge
+  Sample SAM Template for peter-part-interview-challenge
+
+Resources:
+  MyLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      ContentUri: ready-to-use/amazonlinux-2
+
+  SampleApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: Basic AWS Api Gateway
+      StageName: Dev
+
+  OCRInternalFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: main.ocr_internal_function
+      Runtime: python3.12
+      Timeout: 30
+      MemorySize: 256
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - "textract:*"
+              Resource: "*"
+      Layers:
+        - !Ref MyLayer
+
+  OCRApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - "lambda:InvokeFunction"
+              Resource: !GetAtt OCRInternalFunction.Arn
+      CodeUri: src/
+      Handler: main.ocr_api_function
+      Runtime: python3.12
+      Timeout: 30
+      Environment:
+        Variables:
+          OCR_INTERNAL_FUNCTION_ARN: !GetAtt OCRInternalFunction.Arn
+      Events:
+        HelloWorldApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref SampleApiGateway
+            Path: /ocr
+            Method: POST
