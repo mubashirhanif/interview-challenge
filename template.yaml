@@ -5,12 +5,12 @@ Description: >
   Sample SAM Template for peter-part-interview-challenge
 
 Resources:
-  MyLayer:
+  TesseractBinaryLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
       ContentUri: ready-to-use/amazonlinux-2
 
-  SampleApiGateway:
+  OCRApiGateway:
     Type: AWS::Serverless::Api
     Properties:
       Name: Basic AWS Api Gateway
@@ -31,7 +31,7 @@ Resources:
                 - "textract:*"
               Resource: "*"
       Layers:
-        - !Ref MyLayer
+        - !Ref TesseractBinaryLayer
 
   OCRApiFunction:
     Type: AWS::Serverless::Function
@@ -53,6 +53,10 @@ Resources:
         HelloWorldApi:
           Type: Api
           Properties:
-            RestApiId: !Ref SampleApiGateway
+            RestApiId: !Ref OCRApiGateway
             Path: /ocr
             Method: POST
+Outputs:
+  OCRApiURL:
+    Description: "API Gateway endpoint URL for dev OCR Function"
+    Value: !Sub "https://${OCRApiGateway}.execute-api.${AWS::Region}.amazonaws.com/Dev/ocr"
